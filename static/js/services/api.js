@@ -425,4 +425,43 @@ class ApiService {
       throw error;
     }
   }
+  
+  /**
+   * Get budget KPI data for all active budgets
+   * @returns {Promise<Array>} Array of budget KPI data objects
+   */
+  static async getBudgetsKPI() {
+    try {
+      const response = await fetch('/api/budgets/kpi');
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch budget KPI data');
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('API Error:', error);
+      throw error;
+    }
+  }
+  
+  /**
+   * Get KPI data for a specific budget
+   * @param {number} budgetId - The budget ID
+   * @returns {Promise<Object>} The budget KPI data
+   */
+  static async getBudgetKPI(budgetId) {
+    try {
+      const response = await fetch(`/api/budgets/${budgetId}/kpi`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch budget KPI data');
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('API Error:', error);
+      throw error;
+    }
+  }
 }

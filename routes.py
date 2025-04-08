@@ -382,6 +382,97 @@ def get_budget(budget_id):
         return jsonify({'error': 'Not authorized'}), 403
     return jsonify(budget.to_dict())
 
+@app.route('/api/budgets/<int:budget_id>/kpi', methods=['GET'])
+@login_required
+def get_budget_kpi(budget_id):
+    """Get KPI data for a specific budget"""
+    budget = Budget.query.get_or_404(budget_id)
+    
+    # Check if budget belongs to current user
+    if budget.user_id != current_user.id:
+        return jsonify({'error': 'Not authorized'}), 403
+    
+    # Calculate total expenses for this budget's timeframe
+    query = Expense.query.filter(
+        Expense.user_id == current_user.id,
+        Expense.date >= budget.start_date,
+        Expense.date <= budget.end_date
+    )
+    
+    # If budget is for a specific category, filter by that category
+    if budget.category_id:
+        query = query.filter(Expense.category_id == budget.category_id)
+    
+    # Sum expenses
+    total_spent = sum(expense.amount for expense in query.all())
+    
+    # Calculate metrics
+    remaining = budget.amount - total_spent
+    percentage_used = (total_spent / budget.amount * 100) if budget.amount > 0 else 0
+    is_exceeded = total_spent > budget.amount
+    
+    return jsonify({
+        'budget_id': budget.id,
+        'budget_name': budget.name,
+        'budget_amount': budget.amount,
+        'total_spent': total_spent,
+        'remaining': remaining, 
+        'percentage_used': percentage_used,
+        'is_exceeded': is_exceeded,
+        'status': 'Exceeded' if is_exceeded else 'On Track',
+        'category_name': budget.category.name if budget.category else "All Categories",
+        'category_color': budget.category.color if budget.category else "#2e7d32",
+        'start_date': budget.start_date.strftime('%Y-%m-%d'),
+        'end_date': budget.end_date.strftime('%Y-%m-%d')
+    })
+
+@app.route('/api/budgets/kpi', methods=['GET'])
+@login_required
+def get_all_budgets_kpi():
+    """Get KPI data for all active budgets"""
+    budgets = Budget.query.filter_by(user_id=current_user.id, is_active=True).all()
+    
+    if not budgets:
+        return jsonify([])
+    
+    result = []
+    for budget in budgets:
+        # Calculate total expenses for this budget's timeframe
+        query = Expense.query.filter(
+            Expense.user_id == current_user.id,
+            Expense.date >= budget.start_date,
+            Expense.date <= budget.end_date
+        )
+        
+        # If budget is for a specific category, filter by that category
+        if budget.category_id:
+            query = query.filter(Expense.category_id == budget.category_id)
+        
+        # Sum expenses
+        total_spent = sum(expense.amount for expense in query.all())
+        
+        # Calculate metrics
+        remaining = budget.amount - total_spent
+        percentage_used = (total_spent / budget.amount * 100) if budget.amount > 0 else 0
+        is_exceeded = total_spent > budget.amount
+        
+        result.append({
+            'budget_id': budget.id,
+            'budget_name': budget.name,
+            'budget_amount': budget.amount,
+            'total_spent': total_spent,
+            'remaining': remaining,
+            'percentage_used': percentage_used,
+            'is_exceeded': is_exceeded,
+            'status': 'Exceeded' if is_exceeded else 'On Track',
+            'category_name': budget.category.name if budget.category else "All Categories",
+            'category_color': budget.category.color if budget.category else "#2e7d32",
+            'start_date': budget.start_date.strftime('%Y-%m-%d'),
+            'end_date': budget.end_date.strftime('%Y-%m-%d')
+        })
+    
+    return jsonify(result)
+
 @app.route('/api/budgets', methods=['POST'])
 @login_required
 def create_budget():

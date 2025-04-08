@@ -2,7 +2,9 @@
 document.addEventListener('DOMContentLoaded', function() {
   // Initialize the application
   const app = new ExpenseTrackerApp();
-  app.initialize();
+  app.initialize().catch(error => {
+    console.error('Error initializing app:', error);
+  });
 });
 
 class ExpenseTrackerApp {
@@ -31,7 +33,7 @@ class ExpenseTrackerApp {
   async initialize() {
     // Initialize navigation
     this.components.navigation = new Navigation({
-      onNavigate: (view) => this.navigateTo(view)
+      onNavigate: async (view) => await this.navigateTo(view)
     });
     
     // Render the navigation into the nav-container
@@ -47,7 +49,7 @@ class ExpenseTrackerApp {
     this.components.expenseForm = new ExpenseForm({
       onSave: (expense, files) => this.saveExpense(expense, files),
       onUpdate: (expense, files) => this.updateExpense(expense, files),
-      onCancel: () => this.navigateTo('expenseList')
+      onCancel: async () => await this.navigateTo('expenseList')
     });
     
     this.components.expenseList = new ExpenseList({
@@ -82,10 +84,10 @@ class ExpenseTrackerApp {
     await this.loadCategories();
     
     // Navigate to the dashboard view by default
-    this.navigateTo('dashboard');
+    await this.navigateTo('dashboard');
   }
 
-  navigateTo(view, params = {}) {
+  async navigateTo(view, params = {}) {
     const mainContent = document.getElementById('main-content');
     mainContent.innerHTML = '';
     
@@ -114,7 +116,8 @@ class ExpenseTrackerApp {
         this.loadReportData();
         break;
       case 'budgetList':
-        mainContent.appendChild(this.components.budgetList.render(this.state.budgets, this.state.categories));
+        const budgetListElement = await this.components.budgetList.render(this.state.budgets, this.state.categories);
+        mainContent.appendChild(budgetListElement);
         this.loadBudgets();
         break;
       case 'budgetForm':

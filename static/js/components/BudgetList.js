@@ -5,6 +5,7 @@ class BudgetList {
     this.onDeleteBudget = options.onDeleteBudget || (() => {});
     this.budgets = [];
     this.categories = [];
+    this.kpiData = [];
   }
 
   render(budgets = [], categories = []) {
@@ -96,7 +97,7 @@ class BudgetList {
     return container;
   }
 
-  update(budgets, categories) {
+  async update(budgets, categories) {
     this.budgets = budgets;
     this.categories = categories;
     
@@ -109,7 +110,8 @@ class BudgetList {
     // Update the budget progress section
     const progressContainer = document.querySelector('#budget-progress');
     if (progressContainer) {
-      progressContainer.innerHTML = this.renderBudgetProgressContent();
+      const content = await this.renderBudgetProgressContent();
+      progressContainer.innerHTML = content;
     }
     
     // Reinitialize event listeners
@@ -200,7 +202,7 @@ class BudgetList {
     return `<div id="budget-progress">${this.renderBudgetProgressContent()}</div>`;
   }
 
-  renderBudgetProgressContent() {
+  async renderBudgetProgressContent() {
     if (this.budgets.length === 0) {
       return '<div class="text-center">No active budgets to display</div>';
     }
@@ -212,35 +214,54 @@ class BudgetList {
       return '<div class="text-center">No active budgets to display</div>';
     }
     
-    // For now, just show progress bars for active budgets
-    // In a real application, you would calculate actual spending against the budget
-    return activeBudgets.slice(0, 3).map(budget => {
-      // This is a placeholder - in reality you'd compare actual spending to budget
-      const percentage = Math.floor(Math.random() * 100); // Placeholder for demo
-      let progressClass = 'success';
+    try {
+      // Get actual KPI data for the budgets
+      const budgetKPIs = await ApiService.getBudgetsKPI();
       
-      if (percentage > 75) {
+      if (!budgetKPIs || budgetKPIs.length === 0) {
+        return '<div class="text-center">No budget data available</div>';
+      }
+      
+      return budgetKPIs.map(kpi => {
+        const percentage = kpi.percentage_used;
+        let progressClass = 'success';
+      
+      if (percentage > 90) {
         progressClass = 'danger';
-      } else if (percentage > 50) {
+      } else if (percentage > 75) {
         progressClass = 'warning';
       }
       
       return `
         <div class="mb-3">
           <div class="d-flex justify-content-between mb-1">
-            <span>${budget.name}</span>
-            <span>MYR ${budget.amount.toFixed(2)}</span>
+            <span>${kpi.budget_name} (${kpi.category_name})</span>
+            <span class="badge ${kpi.is_exceeded ? 'bg-danger' : 'bg-success'}">
+              ${kpi.is_exceeded ? 'EXCEEDED' : 'ON TRACK'}
+            </span>
+          </div>
+          <div class="d-flex justify-content-between mb-1">
+            <span>Budget: MYR ${kpi.budget_amount.toFixed(2)}</span>
+            <span>Spent: MYR ${kpi.total_spent.toFixed(2)}</span>
           </div>
           <div class="progress" style="height: 20px;">
             <div class="progress-bar bg-${progressClass}" role="progressbar" 
-                 style="width: ${percentage}%;" aria-valuenow="${percentage}" 
+                 style="width: ${Math.min(percentage, 100)}%;" aria-valuenow="${percentage}" 
                  aria-valuemin="0" aria-valuemax="100">
-              ${percentage}%
+              ${percentage.toFixed(1)}%
             </div>
+          </div>
+          <div class="d-flex justify-content-between mt-1">
+            <small>Remaining: MYR ${kpi.remaining.toFixed(2)}</small>
+            <small>${kpi.start_date} - ${kpi.end_date}</small>
           </div>
         </div>
       `;
-    }).join('') + '<div class="text-end mt-3"><small>* Percentages shown are for demonstration purposes only</small></div>';
+    }).join('');
+    } catch (error) {
+      console.error('Error fetching budget KPIs:', error);
+      return '<div class="text-center text-danger">Error loading budget data</div>';
+    }
   }
 
   formatCurrency(value) {
