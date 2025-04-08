@@ -34,6 +34,7 @@ class Category(db.Model):
     color = db.Column(db.String(20), default="#2e7d32")  # Forest green default color
     icon = db.Column(db.String(50), default="tag")  # Default icon
     expenses = db.relationship('Expense', backref='category', lazy=True)
+    budgets = db.relationship('Budget', backref='category', lazy=True)
 
     def __repr__(self):
         return f"<Category {self.name}>"
