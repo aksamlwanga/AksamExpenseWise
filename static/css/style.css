@@ -1,0 +1,172 @@
+/* Custom styles for the Expense Tracker application */
+
+/* Body styling */
+body {
+  background-color: #1a1a1a;
+  color: #f8f9fa;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Card styling */
+.card {
+  margin-bottom: 1.5rem;
+  border: none;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Form controls */
+.form-control, .form-select {
+  background-color: #343a40;
+  border-color: #495057;
+  color: #f8f9fa;
+}
+
+.form-control:focus, .form-select:focus {
+  background-color: #3a4047;
+  color: #f8f9fa;
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.form-control::placeholder {
+  color: #adb5bd;
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+  background-color: #0b5ed7;
+  border-color: #0a58ca;
+}
+
+/* Tables */
+.table {
+  margin-bottom: 0;
+}
+
+.table-dark {
+  color: #f8f9fa;
+  background-color: #212529;
+}
+
+.table-dark th, .table-dark td {
+  border-color: #495057;
+}
+
+/* Category badges */
+.badge {
+  font-weight: 500;
+  padding: 0.35em 0.65em;
+  border-radius: 0.375rem;
+}
+
+/* Progress bars */
+.progress {
+  background-color: #343a40;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  
+  .card-body {
+    padding: 1rem;
+  }
+  
+  .display-4 {
+    font-size: 2rem;
+  }
+}
+
+/* Toast notifications */
+.toast-container {
+  z-index: 1100;
+}
+
+/* File upload styling */
+.receipt-thumbnail {
+  max-height: 150px;
+  object-fit: contain;
+  border-radius: 0.375rem;
+  background-color: #495057;
+}
+
+/* Charts */
+canvas {
+  max-width: 100%;
+}
+
+/* Navbar */
+.navbar-brand {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Footer */
+footer {
+  margin-top: auto;
+  padding: 1.5rem 0;
+  background-color: #212529;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Custom utility classes */
+.text-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Receipt preview */
+.receipt-preview {
+  position: relative;
+  padding-top: 100%;
+  border-radius: 0.375rem;
+  background-color: #343a40;
+  overflow: hidden;
+}
+
+.receipt-preview img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Animated elements */
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* For touch devices - larger touch targets */
+@media (pointer: coarse) {
+  .btn {
+    padding: 0.5rem 1rem;
+    min-height: 44px;
+  }
+  
+  .form-control, .form-select {
+    min-height: 44px;
+    padding: 0.5rem 0.75rem;
+  }
+}

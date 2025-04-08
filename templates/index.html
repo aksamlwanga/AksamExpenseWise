@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- Navigation bar will be injected here -->
+    <div id="nav-container"></div>
+    
+    <!-- Main content area -->
+    <main id="main-content" class="mb-5">
+        <!-- Components will be rendered here dynamically -->
+        <div class="d-flex justify-content-center align-items-center" style="height: 60vh;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="text-center py-3">
+        <div class="container">
+            <p class="mb-0 text-muted">© 2023 Expense Tracker | All Rights Reserved</p>
+        </div>
+    </footer>
+    
+    <!-- Toast container for notifications -->
+    <div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+    
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Components -->
+    <script src="/static/js/components/Navigation.js"></script>
+    <script src="/static/js/components/Dashboard.js"></script>
+    <script src="/static/js/components/ExpenseForm.js"></script>
+    <script src="/static/js/components/ExpenseList.js"></script>
+    <script src="/static/js/components/ExpenseReport.js"></script>
+    <script src="/static/js/components/ReceiptUpload.js"></script>
+    
+    <!-- Services -->
+    <script src="/static/js/services/api.js"></script>
+    
+    <!-- Main App -->
+    <script src="/static/js/app.js"></script>
+    
+    <script>
+        // Initialize the navigation component
+        document.addEventListener('DOMContentLoaded', function() {
+            const navContainer = document.getElementById('nav-container');
+            const navigationComponent = new Navigation({
+                onNavigate: (view) => {
+                    // The main app.js will handle navigation
+                }
+            });
+            navContainer.appendChild(navigationComponent.render());
+        });
+    </script>
+</body>
+</html>
