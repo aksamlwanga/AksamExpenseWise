@@ -57,7 +57,7 @@ class Budget(db.Model):
     is_active = db.Column(db.Boolean, default=True)
     
     def __repr__(self):
-        return f"<Budget {self.name} - RM{self.amount}>"
+        return f"<Budget {self.name} - MYR {self.amount}>"
     
     def to_dict(self):
         return {
