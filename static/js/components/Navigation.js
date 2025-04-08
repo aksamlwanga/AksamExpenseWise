@@ -46,7 +46,7 @@ class Navigation {
             </ul>
             <ul class="navbar-nav">
               <li class="nav-item">
-                <a class="nav-link" href="/logout">
+                <a class="nav-link logout-link" href="/logout">
                   <i class="fas fa-sign-out-alt"></i> Logout
                 </a>
               </li>
@@ -58,7 +58,8 @@ class Navigation {
     
     // Initialize event listeners
     setTimeout(() => {
-      const navLinks = container.querySelectorAll('.nav-link');
+      // Get all nav-links except the logout link
+      const navLinks = container.querySelectorAll('.nav-link:not(.logout-link)');
       
       navLinks.forEach(link => {
         link.addEventListener('click', (e) => {
@@ -68,6 +69,8 @@ class Navigation {
           this.onNavigate(view);
         });
       });
+      
+      // The logout link should work as a normal link
     }, 0);
     
     return container;
