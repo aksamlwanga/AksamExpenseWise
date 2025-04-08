@@ -9,7 +9,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, EmailField
 from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
 from app import app, db
-from models import User, Expense, Category, Receipt
+from models import User, Expense, Category, Receipt, Budget
 
 # Forms for authentication
 class LoginForm(FlaskForm):
@@ -167,6 +167,7 @@ def create_expense():
     expense = Expense(
         title=data['title'],
         amount=amount,
+        currency=data.get('currency', 'MYR'),
         date=date,
         description=data.get('description', ''),
         category_id=category_id,
@@ -222,6 +223,9 @@ def update_expense(expense_id):
     
     if 'description' in data:
         expense.description = data['description']
+    
+    if 'currency' in data:
+        expense.currency = data['currency']
     
     if 'category_id' in data:
         try:
@@ -359,6 +363,118 @@ def delete_receipt(receipt_id):
     db.session.commit()
     
     return jsonify({'message': 'Receipt deleted successfully'})
+
+# API Endpoints for Budgets
+@app.route('/api/budgets', methods=['GET'])
+@login_required
+def get_budgets():
+    """Get all budgets for the current user"""
+    budgets = Budget.query.filter_by(user_id=current_user.id).all()
+    return jsonify([budget.to_dict() for budget in budgets])
+
+@app.route('/api/budgets/<int:budget_id>', methods=['GET'])
+@login_required
+def get_budget(budget_id):
+    """Get a specific budget by ID"""
+    budget = Budget.query.get_or_404(budget_id)
+    # Check if budget belongs to current user
+    if budget.user_id != current_user.id:
+        return jsonify({'error': 'Not authorized'}), 403
+    return jsonify(budget.to_dict())
+
+@app.route('/api/budgets', methods=['POST'])
+@login_required
+def create_budget():
+    """Create a new budget"""
+    data = request.json
+    
+    # Validate required fields
+    required_fields = ['name', 'amount', 'start_date', 'end_date']
+    for field in required_fields:
+        if field not in data:
+            return jsonify({'error': f'Missing required field: {field}'}), 400
+    
+    # Parse dates
+    try:
+        start_date = datetime.strptime(data['start_date'], '%Y-%m-%d')
+        end_date = datetime.strptime(data['end_date'], '%Y-%m-%d')
+    except ValueError:
+        return jsonify({'error': 'Invalid date format, use YYYY-MM-DD'}), 400
+    
+    # Create budget
+    budget = Budget(
+        name=data['name'],
+        amount=float(data['amount']),
+        start_date=start_date,
+        end_date=end_date,
+        category_id=data.get('category_id'),
+        user_id=current_user.id,
+        is_active=data.get('is_active', True)
+    )
+    
+    db.session.add(budget)
+    db.session.commit()
+    
+    return jsonify(budget.to_dict()), 201
+
+@app.route('/api/budgets/<int:budget_id>', methods=['PUT'])
+@login_required
+def update_budget(budget_id):
+    """Update an existing budget"""
+    budget = Budget.query.get_or_404(budget_id)
+    
+    # Check if budget belongs to current user
+    if budget.user_id != current_user.id:
+        return jsonify({'error': 'Not authorized'}), 403
+    
+    data = request.json
+    
+    # Update fields if provided
+    if 'name' in data:
+        budget.name = data['name']
+    
+    if 'amount' in data:
+        try:
+            budget.amount = float(data['amount'])
+        except ValueError:
+            return jsonify({'error': 'Invalid amount format'}), 400
+    
+    if 'start_date' in data:
+        try:
+            budget.start_date = datetime.strptime(data['start_date'], '%Y-%m-%d')
+        except ValueError:
+            return jsonify({'error': 'Invalid start date format, use YYYY-MM-DD'}), 400
+    
+    if 'end_date' in data:
+        try:
+            budget.end_date = datetime.strptime(data['end_date'], '%Y-%m-%d')
+        except ValueError:
+            return jsonify({'error': 'Invalid end date format, use YYYY-MM-DD'}), 400
+    
+    if 'category_id' in data:
+        budget.category_id = data['category_id']
+    
+    if 'is_active' in data:
+        budget.is_active = data['is_active']
+    
+    db.session.commit()
+    
+    return jsonify(budget.to_dict())
+
+@app.route('/api/budgets/<int:budget_id>', methods=['DELETE'])
+@login_required
+def delete_budget(budget_id):
+    """Delete a budget"""
+    budget = Budget.query.get_or_404(budget_id)
+    
+    # Check if budget belongs to current user
+    if budget.user_id != current_user.id:
+        return jsonify({'error': 'Not authorized'}), 403
+    
+    db.session.delete(budget)
+    db.session.commit()
+    
+    return jsonify({'message': 'Budget deleted successfully'})
 
 # Reports and Analytics
 @app.route('/api/reports/monthly', methods=['GET'])

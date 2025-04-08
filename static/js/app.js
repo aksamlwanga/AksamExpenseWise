@@ -12,6 +12,7 @@ class ExpenseTrackerApp {
     this.state = {
       expenses: [],
       categories: [],
+      budgets: [],
       reports: {
         monthly: [],
         category: [],
@@ -63,6 +64,19 @@ class ExpenseTrackerApp {
     this.components.receiptUpload = new ReceiptUpload({
       onUpload: (files, expenseId) => this.uploadReceipts(files, expenseId)
     });
+    
+    // Initialize budget components
+    this.components.budgetList = new BudgetList({
+      onNewBudget: () => this.navigateTo('budgetForm'),
+      onEditBudget: (budget) => this.navigateTo('budgetForm', { budget }),
+      onDeleteBudget: (budgetId) => this.deleteBudget(budgetId)
+    });
+    
+    this.components.budgetForm = new BudgetForm({
+      onSave: (budget) => this.saveBudget(budget),
+      onUpdate: (budget) => this.updateBudget(budget),
+      onCancel: () => this.navigateTo('budgetList')
+    });
 
     // Load initial data
     await this.loadCategories();
@@ -99,12 +113,123 @@ class ExpenseTrackerApp {
         mainContent.appendChild(this.components.expenseReport.render(this.state.reports, this.state.categories));
         this.loadReportData();
         break;
+      case 'budgetList':
+        mainContent.appendChild(this.components.budgetList.render(this.state.budgets, this.state.categories));
+        this.loadBudgets();
+        break;
+      case 'budgetForm':
+        if (params.budget) {
+          mainContent.appendChild(this.components.budgetForm.render(params.budget, this.state.categories));
+        } else {
+          mainContent.appendChild(this.components.budgetForm.render(null, this.state.categories));
+        }
+        break;
       default:
         mainContent.appendChild(this.components.dashboard.render());
         this.loadDashboardData();
     }
     
     this.currentView = view;
+  }
+  
+  async loadBudgets() {
+    try {
+      const response = await fetch('/api/budgets');
+      if (!response.ok) {
+        throw new Error('Failed to load budgets');
+      }
+      
+      this.state.budgets = await response.json();
+      
+      // Update the budget list component if currently viewing
+      if (this.currentView === 'budgetList') {
+        this.components.budgetList.update(this.state.budgets, this.state.categories);
+      }
+    } catch (error) {
+      console.error('Error loading budgets:', error);
+      this.showError('Failed to load budgets. Please try again.');
+    }
+  }
+  
+  async saveBudget(budget) {
+    try {
+      const response = await fetch('/api/budgets', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(budget)
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to save budget');
+      }
+      
+      this.showSuccess('Budget saved successfully');
+      
+      // Navigate back to budget list
+      this.navigateTo('budgetList');
+      
+      // Refresh budget data
+      this.loadBudgets();
+    } catch (error) {
+      console.error('Error saving budget:', error);
+      this.showError(error.message || 'Failed to save budget. Please try again.');
+    }
+  }
+  
+  async updateBudget(budget) {
+    try {
+      const response = await fetch(`/api/budgets/${budget.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(budget)
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to update budget');
+      }
+      
+      this.showSuccess('Budget updated successfully');
+      
+      // Navigate back to budget list
+      this.navigateTo('budgetList');
+      
+      // Refresh budget data
+      this.loadBudgets();
+    } catch (error) {
+      console.error('Error updating budget:', error);
+      this.showError(error.message || 'Failed to update budget. Please try again.');
+    }
+  }
+  
+  async deleteBudget(budgetId) {
+    if (!confirm('Are you sure you want to delete this budget?')) {
+      return;
+    }
+    
+    try {
+      const response = await fetch(`/api/budgets/${budgetId}`, {
+        method: 'DELETE'
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to delete budget');
+      }
+      
+      this.showSuccess('Budget deleted successfully');
+      
+      // Refresh budget data
+      this.loadBudgets();
+    } catch (error) {
+      console.error('Error deleting budget:', error);
+      this.showError(error.message || 'Failed to delete budget. Please try again.');
+    }
   }
 
   async loadCategories() {

@@ -38,6 +38,11 @@ class Navigation {
                   <i class="fas fa-chart-pie"></i> Reports
                 </a>
               </li>
+              <li class="nav-item">
+                <a class="nav-link ${this.activeView === 'budgetList' ? 'active' : ''}" href="#" data-view="budgetList">
+                  <i class="fas fa-bullseye"></i> Budgets
+                </a>
+              </li>
             </ul>
             <ul class="navbar-nav">
               <li class="nav-item">

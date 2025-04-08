@@ -36,13 +36,29 @@ class ExpenseForm {
                 <div class="invalid-feedback">Please provide a title.</div>
               </div>
               
-              <div class="col-md-6">
+              <div class="col-md-4">
                 <label for="expense-amount" class="form-label">Amount</label>
                 <div class="input-group">
-                  <span class="input-group-text">$</span>
+                  <span class="input-group-text">MYR</span>
                   <input type="number" class="form-control" id="expense-amount" min="0.01" step="0.01" value="${expense ? expense.amount : ''}" required>
                   <div class="invalid-feedback">Please provide a valid amount.</div>
                 </div>
+              </div>
+              
+              <div class="col-md-2">
+                <label for="expense-currency" class="form-label">Currency</label>
+                <select class="form-select" id="expense-currency">
+                  <option value="MYR" ${!expense || expense.currency === 'MYR' ? 'selected' : ''}>MYR</option>
+                  <option value="USD" ${expense && expense.currency === 'USD' ? 'selected' : ''}>USD</option>
+                  <option value="EUR" ${expense && expense.currency === 'EUR' ? 'selected' : ''}>EUR</option>
+                  <option value="GBP" ${expense && expense.currency === 'GBP' ? 'selected' : ''}>GBP</option>
+                  <option value="AUD" ${expense && expense.currency === 'AUD' ? 'selected' : ''}>AUD</option>
+                  <option value="SGD" ${expense && expense.currency === 'SGD' ? 'selected' : ''}>SGD</option>
+                  <option value="JPY" ${expense && expense.currency === 'JPY' ? 'selected' : ''}>JPY</option>
+                  <option value="CNY" ${expense && expense.currency === 'CNY' ? 'selected' : ''}>CNY</option>
+                  <option value="THB" ${expense && expense.currency === 'THB' ? 'selected' : ''}>THB</option>
+                  <option value="IDR" ${expense && expense.currency === 'IDR' ? 'selected' : ''}>IDR</option>
+                </select>
               </div>
               
               <div class="col-md-6">
@@ -175,6 +191,7 @@ class ExpenseForm {
   getFormData() {
     const title = document.getElementById('expense-title').value.trim();
     const amount = parseFloat(document.getElementById('expense-amount').value);
+    const currency = document.getElementById('expense-currency').value;
     const date = document.getElementById('expense-date').value;
     const categoryId = document.getElementById('expense-category').value;
     const description = document.getElementById('expense-description').value.trim();
@@ -182,6 +199,7 @@ class ExpenseForm {
     const formData = {
       title,
       amount,
+      currency,
       date,
       category_id: categoryId,
       description

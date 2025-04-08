@@ -25,7 +25,7 @@ class Dashboard {
           <div class="card text-white h-100">
             <div class="card-body">
               <h5 class="card-title" style="color: #4caf50;"><i class="fas fa-money-bill-wave"></i> Total Expenses</h5>
-              <p id="total-expenses" class="display-4">RM 0.00</p>
+              <p id="total-expenses" class="display-4">MYR 0.00</p>
               <p class="text-muted small">All time</p>
             </div>
           </div>
@@ -34,7 +34,7 @@ class Dashboard {
           <div class="card text-white h-100">
             <div class="card-body">
               <h5 class="card-title" style="color: #4caf50;"><i class="fas fa-calculator"></i> Average Expense</h5>
-              <p id="average-expense" class="display-4">RM 0.00</p>
+              <p id="average-expense" class="display-4">MYR 0.00</p>
               <p class="text-muted small">Per transaction</p>
             </div>
           </div>
@@ -119,8 +119,8 @@ class Dashboard {
     
     // Update summary cards
     const summary = reports.summary || {};
-    document.getElementById('total-expenses').textContent = `RM ${this.formatCurrency(summary.total || 0)}`;
-    document.getElementById('average-expense').textContent = `RM ${this.formatCurrency(summary.average || 0)}`;
+    document.getElementById('total-expenses').textContent = `MYR ${this.formatCurrency(summary.total || 0)}`;
+    document.getElementById('average-expense').textContent = `MYR ${this.formatCurrency(summary.average || 0)}`;
     document.getElementById('expense-count').textContent = summary.count || 0;
     
     // Update recent expenses table
@@ -150,7 +150,7 @@ class Dashboard {
             <i class="fas fa-${expense.category_icon}"></i> ${expense.category_name}
           </span>
         </td>
-        <td>RM ${this.formatCurrency(expense.amount)}</td>
+        <td>${expense.currency} ${this.formatCurrency(expense.amount)}</td>
       </tr>
     `).join('');
   }
@@ -190,7 +190,7 @@ class Dashboard {
             beginAtZero: true,
             ticks: {
               callback: function(value) {
-                return 'RM ' + value;
+                return 'MYR ' + value;
               }
             }
           }
@@ -199,7 +199,7 @@ class Dashboard {
           tooltip: {
             callbacks: {
               label: function(context) {
-                return 'RM ' + context.parsed.y.toFixed(2);
+                return 'MYR ' + context.parsed.y.toFixed(2);
               }
             }
           }
@@ -245,7 +245,7 @@ class Dashboard {
                 const value = context.parsed || 0;
                 const total = context.dataset.data.reduce((a, b) => a + b, 0);
                 const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
-                return `${label}: RM ${value.toFixed(2)} (${percentage}%)`;
+                return `${label}: MYR ${value.toFixed(2)} (${percentage}%)`;
               }
             }
           }

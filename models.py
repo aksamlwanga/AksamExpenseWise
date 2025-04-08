@@ -10,6 +10,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(256))
     expenses = db.relationship('Expense', backref='user', lazy=True, cascade="all, delete-orphan")
+    budgets = db.relationship('Budget', backref='user', lazy=True, cascade="all, delete-orphan")
     
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -45,10 +46,39 @@ class Category(db.Model):
             'icon': self.icon
         }
 
+class Budget(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    amount = db.Column(db.Float, nullable=False)
+    start_date = db.Column(db.DateTime, nullable=False)
+    end_date = db.Column(db.DateTime, nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    is_active = db.Column(db.Boolean, default=True)
+    
+    def __repr__(self):
+        return f"<Budget {self.name} - RM{self.amount}>"
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'amount': self.amount,
+            'start_date': self.start_date.strftime('%Y-%m-%d'),
+            'end_date': self.end_date.strftime('%Y-%m-%d'),
+            'category_id': self.category_id,
+            'user_id': self.user_id,
+            'is_active': self.is_active,
+            'category_name': self.category.name if self.category else "All Categories",
+            'category_color': self.category.color if self.category else "#2e7d32",
+            'category_icon': self.category.icon if self.category else "money-bill"
+        }
+
 class Expense(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     amount = db.Column(db.Float, nullable=False)
+    currency = db.Column(db.String(3), default="MYR")
     date = db.Column(db.DateTime, default=datetime.utcnow)
     description = db.Column(db.Text, nullable=True)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
@@ -56,13 +86,14 @@ class Expense(db.Model):
     receipts = db.relationship('Receipt', backref='expense', lazy=True, cascade="all, delete-orphan")
     
     def __repr__(self):
-        return f"<Expense {self.title} - RM{self.amount}>"
+        return f"<Expense {self.title} - {self.currency} {self.amount}>"
     
     def to_dict(self):
         return {
             'id': self.id,
             'title': self.title,
             'amount': self.amount,
+            'currency': self.currency,
             'date': self.date.strftime('%Y-%m-%d'),
             'description': self.description,
             'category_id': self.category_id,

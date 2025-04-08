@@ -224,6 +224,122 @@ class ApiService {
       throw error;
     }
   }
+  
+  /**
+   * Get all budgets
+   * @returns {Promise<Array>} Array of budgets
+   */
+  static async getBudgets() {
+    try {
+      const response = await fetch('/api/budgets');
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch budgets');
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('API Error:', error);
+      throw error;
+    }
+  }
+  
+  /**
+   * Get a specific budget by ID
+   * @param {number} budgetId - The budget ID
+   * @returns {Promise<Object>} The budget object
+   */
+  static async getBudget(budgetId) {
+    try {
+      const response = await fetch(`/api/budgets/${budgetId}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch budget details');
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('API Error:', error);
+      throw error;
+    }
+  }
+  
+  /**
+   * Create a new budget
+   * @param {Object} budget - The budget data
+   * @returns {Promise<Object>} The created budget
+   */
+  static async createBudget(budget) {
+    try {
+      const response = await fetch('/api/budgets', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(budget)
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create budget');
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('API Error:', error);
+      throw error;
+    }
+  }
+  
+  /**
+   * Update an existing budget
+   * @param {Object} budget - The budget data
+   * @returns {Promise<Object>} The updated budget
+   */
+  static async updateBudget(budget) {
+    try {
+      const response = await fetch(`/api/budgets/${budget.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(budget)
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update budget');
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('API Error:', error);
+      throw error;
+    }
+  }
+  
+  /**
+   * Delete a budget
+   * @param {number} budgetId - The budget ID
+   * @returns {Promise<Object>} The response message
+   */
+  static async deleteBudget(budgetId) {
+    try {
+      const response = await fetch(`/api/budgets/${budgetId}`, {
+        method: 'DELETE'
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to delete budget');
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('API Error:', error);
+      throw error;
+    }
+  }
 
   /**
    * Get monthly expense report

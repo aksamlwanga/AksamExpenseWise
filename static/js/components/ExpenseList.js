@@ -186,7 +186,7 @@ class ExpenseList {
               <i class="fas fa-${expense.category_icon}"></i> ${expense.category_name}
             </span>
           </td>
-          <td>$${this.formatCurrency(expense.amount)}</td>
+          <td>${expense.currency} ${this.formatCurrency(expense.amount)}</td>
           <td>
             ${receiptCount > 0 ? 
               `<span class="badge bg-info">${receiptCount} ${receiptCount === 1 ? 'receipt' : 'receipts'}</span>` : 
