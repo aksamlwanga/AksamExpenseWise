@@ -49,6 +49,7 @@ class ExpenseForm {
                 <label for="expense-currency" class="form-label">Currency</label>
                 <select class="form-select" id="expense-currency">
                   <option value="MYR" ${!expense || expense.currency === 'MYR' ? 'selected' : ''}>MYR</option>
+                  <option value="UGX" ${expense && expense.currency === 'UGX' ? 'selected' : ''}>UGX</option>
                   <option value="USD" ${expense && expense.currency === 'USD' ? 'selected' : ''}>USD</option>
                   <option value="EUR" ${expense && expense.currency === 'EUR' ? 'selected' : ''}>EUR</option>
                   <option value="GBP" ${expense && expense.currency === 'GBP' ? 'selected' : ''}>GBP</option>
