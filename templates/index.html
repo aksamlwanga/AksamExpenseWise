@@ -57,17 +57,9 @@
     <!-- Main App -->
     <script src="/static/js/app.js"></script>
     
+    <!-- Navigation is now initialized from app.js -->
     <script>
-        // Initialize the navigation component
-        document.addEventListener('DOMContentLoaded', function() {
-            const navContainer = document.getElementById('nav-container');
-            const navigationComponent = new Navigation({
-                onNavigate: (view) => {
-                    // The main app.js will handle navigation
-                }
-            });
-            navContainer.appendChild(navigationComponent.render());
-        });
+        // Nothing needed here - app.js handles all initialization
     </script>
 </body>
 </html>

@@ -32,6 +32,11 @@ class ExpenseTrackerApp {
     this.components.navigation = new Navigation({
       onNavigate: (view) => this.navigateTo(view)
     });
+    
+    // Render the navigation into the nav-container
+    const navContainer = document.getElementById('nav-container');
+    navContainer.innerHTML = ''; // Clear existing content
+    navContainer.appendChild(this.components.navigation.render());
 
     // Initialize all components
     this.components.dashboard = new Dashboard({
