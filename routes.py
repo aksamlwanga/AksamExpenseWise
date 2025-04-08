@@ -1,14 +1,84 @@
 import os
 import uuid
 from datetime import datetime
-from flask import request, jsonify, send_from_directory, render_template
+from flask import request, jsonify, send_from_directory, render_template, redirect, url_for, flash
 from werkzeug.utils import secure_filename
 from sqlalchemy import extract, func
+from flask_login import login_user, logout_user, login_required, current_user
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, EmailField
+from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError
 from app import app, db
-from models import Expense, Category, Receipt
+from models import User, Expense, Category, Receipt
+
+# Forms for authentication
+class LoginForm(FlaskForm):
+    email = EmailField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    remember_me = BooleanField('Remember Me')
+    submit = SubmitField('Sign In')
+
+class RegistrationForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(min=3, max=64)])
+    email = EmailField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
+    password2 = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Register')
+    
+    def validate_username(self, username):
+        user = User.query.filter_by(username=username.data).first()
+        if user:
+            raise ValidationError('Username already taken. Please use a different one.')
+            
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user:
+            raise ValidationError('Email already registered. Please use a different one.')
+
+# Authentication routes
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user is None or not user.check_password(form.password.data):
+            flash('Invalid email or password', 'danger')
+            return render_template('login.html', form=form)
+        
+        login_user(user, remember=form.remember_me.data)
+        flash('Login successful!', 'success')
+        return redirect(url_for('index'))
+    
+    return render_template('login.html', form=form)
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = User(username=form.username.data, email=form.email.data)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        flash('Registration successful! You can now log in.', 'success')
+        return redirect(url_for('login'))
+    
+    return render_template('register.html', form=form)
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    flash('You have been logged out.', 'info')
+    return redirect(url_for('login'))
 
 # Serve the main application
 @app.route('/')
+@login_required
 def index():
     return render_template('index.html')
 
@@ -24,6 +94,7 @@ def serve_upload(filename):
 
 # API Endpoints for Expenses
 @app.route('/api/expenses', methods=['GET'])
+@login_required
 def get_expenses():
     """Get all expenses with optional filtering"""
     # Get query parameters
@@ -33,8 +104,8 @@ def get_expenses():
     sort_by = request.args.get('sort_by', 'date')
     sort_order = request.args.get('sort_order', 'desc')
     
-    # Build query
-    query = Expense.query
+    # Build query - only show expenses for the current user
+    query = Expense.query.filter(Expense.user_id == current_user.id)
     
     # Apply filters
     if category_id:
@@ -66,6 +137,7 @@ def get_expense(expense_id):
     return jsonify(expense.to_dict())
 
 @app.route('/api/expenses', methods=['POST'])
+@login_required
 def create_expense():
     """Create a new expense"""
     data = request.form.to_dict()
@@ -91,13 +163,14 @@ def create_expense():
         except ValueError:
             return jsonify({'error': 'Invalid date format, use YYYY-MM-DD'}), 400
     
-    # Create expense
+    # Create expense with the current user id
     expense = Expense(
         title=data['title'],
         amount=amount,
         date=date,
         description=data.get('description', ''),
-        category_id=category_id
+        category_id=category_id,
+        user_id=current_user.id
     )
     
     db.session.add(expense)

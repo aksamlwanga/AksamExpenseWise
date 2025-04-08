@@ -8,16 +8,16 @@ class Navigation {
     const container = document.createElement('div');
     
     container.innerHTML = `
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #2e4832;">
         <div class="container-fluid">
           <a class="navbar-brand" href="#">
-            <i class="fas fa-receipt"></i> ExpenseTracker
+            <i class="fas fa-leaf"></i> ForestExpense
           </a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
+            <ul class="navbar-nav me-auto">
               <li class="nav-item">
                 <a class="nav-link ${this.activeView === 'dashboard' ? 'active' : ''}" href="#" data-view="dashboard">
                   <i class="fas fa-tachometer-alt"></i> Dashboard
@@ -36,6 +36,13 @@ class Navigation {
               <li class="nav-item">
                 <a class="nav-link ${this.activeView === 'expenseReport' ? 'active' : ''}" href="#" data-view="expenseReport">
                   <i class="fas fa-chart-pie"></i> Reports
+                </a>
+              </li>
+            </ul>
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link" href="/logout">
+                  <i class="fas fa-sign-out-alt"></i> Logout
                 </a>
               </li>
             </ul>

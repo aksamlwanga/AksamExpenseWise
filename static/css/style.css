@@ -1,8 +1,8 @@
-/* Custom styles for the Expense Tracker application */
+/* Custom styles for the Forest Expense Tracker application */
 
 /* Body styling */
 body {
-  background-color: #1a1a1a;
+  background-color: #1b2e1c;
   color: #f8f9fa;
   min-height: 100vh;
   display: flex;
@@ -14,24 +14,26 @@ body {
   margin-bottom: 1.5rem;
   border: none;
   box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.15);
+  background-color: #2e4832;
 }
 
 .card-header {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: #253b28;
 }
 
 /* Form controls */
 .form-control, .form-select {
-  background-color: #343a40;
-  border-color: #495057;
+  background-color: #253b28;
+  border-color: #2e7d32;
   color: #f8f9fa;
 }
 
 .form-control:focus, .form-select:focus {
-  background-color: #3a4047;
+  background-color: #2a432d;
   color: #f8f9fa;
-  border-color: #80bdff;
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  border-color: #4caf50;
+  box-shadow: 0 0 0 0.25rem rgba(46, 125, 50, 0.25);
 }
 
 .form-control::placeholder {
@@ -40,13 +42,37 @@ body {
 
 /* Buttons */
 .btn-primary {
-  background-color: #0d6efd;
-  border-color: #0d6efd;
+  background-color: #2e7d32;
+  border-color: #2e7d32;
 }
 
 .btn-primary:hover {
-  background-color: #0b5ed7;
-  border-color: #0a58ca;
+  background-color: #1b5e20;
+  border-color: #1b5e20;
+}
+
+/* Forest theme specific styles */
+:root {
+  --forest-primary: #2e7d32;
+  --forest-secondary: #1b5e20;
+  --forest-accent: #4caf50;
+  --forest-light: #81c784;
+  --forest-dark: #1b2e1c;
+  --forest-background: #2a432d;
+  --forest-card-bg: #2e4832;
+  --forest-card-header: #253b28;
+}
+
+.btn-forest {
+  background-color: var(--forest-primary);
+  border-color: var(--forest-primary);
+  color: white;
+}
+
+.btn-forest:hover {
+  background-color: var(--forest-secondary);
+  border-color: var(--forest-secondary);
+  color: white;
 }
 
 /* Tables */

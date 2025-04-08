@@ -1,11 +1,36 @@
 from app import db
 from datetime import datetime
 import json
+from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
+
+class User(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(64), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.String(256))
+    expenses = db.relationship('Expense', backref='user', lazy=True, cascade="all, delete-orphan")
+    
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+        
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+    
+    def __repr__(self):
+        return f"<User {self.username}>"
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'username': self.username,
+            'email': self.email
+        }
 
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False, unique=True)
-    color = db.Column(db.String(20), default="#6c757d")  # Default color
+    color = db.Column(db.String(20), default="#2e7d32")  # Forest green default color
     icon = db.Column(db.String(50), default="tag")  # Default icon
     expenses = db.relationship('Expense', backref='category', lazy=True)
 
@@ -27,10 +52,11 @@ class Expense(db.Model):
     date = db.Column(db.DateTime, default=datetime.utcnow)
     description = db.Column(db.Text, nullable=True)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # Initially allow null for data migration
     receipts = db.relationship('Receipt', backref='expense', lazy=True, cascade="all, delete-orphan")
     
     def __repr__(self):
-        return f"<Expense {self.title} - ${self.amount}>"
+        return f"<Expense {self.title} - RM{self.amount}>"
     
     def to_dict(self):
         return {
@@ -40,6 +66,7 @@ class Expense(db.Model):
             'date': self.date.strftime('%Y-%m-%d'),
             'description': self.description,
             'category_id': self.category_id,
+            'user_id': self.user_id,
             'category_name': self.category.name if self.category else None,
             'category_color': self.category.color if self.category else None,
             'category_icon': self.category.icon if self.category else None,

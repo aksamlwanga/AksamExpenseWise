@@ -14,35 +14,35 @@ class Dashboard {
     container.className = 'container py-4';
     container.innerHTML = `
       <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3">Dashboard</h1>
-        <button id="refresh-dashboard" class="btn btn-sm btn-secondary">
-          <i class="fas fa-sync-alt"></i> Refresh
+        <h1 class="h3"><i class="fas fa-leaf"></i> Forest Expense Dashboard</h1>
+        <button id="refresh-dashboard" class="btn btn-sm btn-forest">
+          <i class="fas fa-leaf fa-spin-pulse"></i> Refresh
         </button>
       </div>
       
       <div class="row mb-4">
         <div class="col-md-4 mb-3">
-          <div class="card bg-dark text-white h-100">
+          <div class="card text-white h-100">
             <div class="card-body">
-              <h5 class="card-title text-info">Total Expenses</h5>
-              <p id="total-expenses" class="display-4">$0.00</p>
+              <h5 class="card-title" style="color: #4caf50;"><i class="fas fa-money-bill-wave"></i> Total Expenses</h5>
+              <p id="total-expenses" class="display-4">RM 0.00</p>
               <p class="text-muted small">All time</p>
             </div>
           </div>
         </div>
         <div class="col-md-4 mb-3">
-          <div class="card bg-dark text-white h-100">
+          <div class="card text-white h-100">
             <div class="card-body">
-              <h5 class="card-title text-info">Average Expense</h5>
-              <p id="average-expense" class="display-4">$0.00</p>
+              <h5 class="card-title" style="color: #4caf50;"><i class="fas fa-calculator"></i> Average Expense</h5>
+              <p id="average-expense" class="display-4">RM 0.00</p>
               <p class="text-muted small">Per transaction</p>
             </div>
           </div>
         </div>
         <div class="col-md-4 mb-3">
-          <div class="card bg-dark text-white h-100">
+          <div class="card text-white h-100">
             <div class="card-body">
-              <h5 class="card-title text-info">Transaction Count</h5>
+              <h5 class="card-title" style="color: #4caf50;"><i class="fas fa-list-alt"></i> Transaction Count</h5>
               <p id="expense-count" class="display-4">0</p>
               <p class="text-muted small">Total records</p>
             </div>
@@ -52,9 +52,9 @@ class Dashboard {
       
       <div class="row mb-4">
         <div class="col-lg-8 mb-3">
-          <div class="card bg-dark text-white">
+          <div class="card text-white">
             <div class="card-header">
-              <h5 class="card-title mb-0">Monthly Expenses</h5>
+              <h5 class="card-title mb-0"><i class="fas fa-calendar-alt"></i> Monthly Expenses</h5>
             </div>
             <div class="card-body">
               <canvas id="monthly-chart" height="300"></canvas>
@@ -62,9 +62,9 @@ class Dashboard {
           </div>
         </div>
         <div class="col-lg-4 mb-3">
-          <div class="card bg-dark text-white">
+          <div class="card text-white">
             <div class="card-header">
-              <h5 class="card-title mb-0">Expense Categories</h5>
+              <h5 class="card-title mb-0"><i class="fas fa-tags"></i> Expense Categories</h5>
             </div>
             <div class="card-body">
               <canvas id="category-chart" height="300"></canvas>
@@ -75,9 +75,9 @@ class Dashboard {
       
       <div class="row">
         <div class="col-12">
-          <div class="card bg-dark text-white">
+          <div class="card text-white">
             <div class="card-header">
-              <h5 class="card-title mb-0">Recent Expenses</h5>
+              <h5 class="card-title mb-0"><i class="fas fa-receipt"></i> Recent Expenses</h5>
             </div>
             <div class="card-body">
               <div id="recent-expenses" class="table-responsive">
@@ -119,8 +119,8 @@ class Dashboard {
     
     // Update summary cards
     const summary = reports.summary || {};
-    document.getElementById('total-expenses').textContent = `$${this.formatCurrency(summary.total || 0)}`;
-    document.getElementById('average-expense').textContent = `$${this.formatCurrency(summary.average || 0)}`;
+    document.getElementById('total-expenses').textContent = `RM ${this.formatCurrency(summary.total || 0)}`;
+    document.getElementById('average-expense').textContent = `RM ${this.formatCurrency(summary.average || 0)}`;
     document.getElementById('expense-count').textContent = summary.count || 0;
     
     // Update recent expenses table
@@ -150,7 +150,7 @@ class Dashboard {
             <i class="fas fa-${expense.category_icon}"></i> ${expense.category_name}
           </span>
         </td>
-        <td>$${this.formatCurrency(expense.amount)}</td>
+        <td>RM ${this.formatCurrency(expense.amount)}</td>
       </tr>
     `).join('');
   }
@@ -177,8 +177,8 @@ class Dashboard {
         datasets: [{
           label: 'Monthly Expenses',
           data: data,
-          backgroundColor: 'rgba(54, 162, 235, 0.5)',
-          borderColor: 'rgba(54, 162, 235, 1)',
+          backgroundColor: 'rgba(46, 125, 50, 0.7)',
+          borderColor: 'rgba(27, 94, 32, 1)',
           borderWidth: 1
         }]
       },
@@ -190,7 +190,7 @@ class Dashboard {
             beginAtZero: true,
             ticks: {
               callback: function(value) {
-                return '$' + value;
+                return 'RM ' + value;
               }
             }
           }
@@ -199,7 +199,7 @@ class Dashboard {
           tooltip: {
             callbacks: {
               label: function(context) {
-                return '$' + context.parsed.y.toFixed(2);
+                return 'RM ' + context.parsed.y.toFixed(2);
               }
             }
           }
@@ -245,7 +245,7 @@ class Dashboard {
                 const value = context.parsed || 0;
                 const total = context.dataset.data.reduce((a, b) => a + b, 0);
                 const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
-                return `${label}: $${value.toFixed(2)} (${percentage}%)`;
+                return `${label}: RM ${value.toFixed(2)} (${percentage}%)`;
               }
             }
           }
