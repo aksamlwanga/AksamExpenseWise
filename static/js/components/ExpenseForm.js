@@ -39,7 +39,7 @@ class ExpenseForm {
               <div class="col-md-4">
                 <label for="expense-amount" class="form-label">Amount</label>
                 <div class="input-group">
-                  <span class="input-group-text">MYR</span>
+                  <span class="input-group-text">UGX</span>
                   <input type="number" class="form-control" id="expense-amount" min="0.01" step="0.01" value="${expense ? expense.amount : ''}" required>
                   <div class="invalid-feedback">Please provide a valid amount.</div>
                 </div>
@@ -48,8 +48,8 @@ class ExpenseForm {
               <div class="col-md-2">
                 <label for="expense-currency" class="form-label">Currency</label>
                 <select class="form-select" id="expense-currency">
-                  <option value="MYR" ${!expense || expense.currency === 'MYR' ? 'selected' : ''}>MYR</option>
-                  <option value="UGX" ${expense && expense.currency === 'UGX' ? 'selected' : ''}>UGX</option>
+                  <option value="UGX" ${!expense || expense.currency === 'UGX' ? 'selected' : ''}>UGX</option>
+                  <option value="MYR" ${expense && expense.currency === 'MYR' ? 'selected' : ''}>MYR</option>
                   <option value="USD" ${expense && expense.currency === 'USD' ? 'selected' : ''}>USD</option>
                   <option value="EUR" ${expense && expense.currency === 'EUR' ? 'selected' : ''}>EUR</option>
                   <option value="GBP" ${expense && expense.currency === 'GBP' ? 'selected' : ''}>GBP</option>

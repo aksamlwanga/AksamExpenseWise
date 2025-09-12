@@ -39,8 +39,8 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # Configure application theme (using Bootstrap with forest theme)
 app.config['THEME_COLOR'] = '#2e7d32'  # Forest green
-app.config['CURRENCY_CODE'] = 'MYR'
-app.config['CURRENCY_SYMBOL'] = 'RM'
+app.config['CURRENCY_CODE'] = 'UGX'
+app.config['CURRENCY_SYMBOL'] = 'UGX'
 
 # Initialize extensions
 db.init_app(app)

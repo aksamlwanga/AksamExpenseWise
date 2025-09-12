@@ -79,7 +79,7 @@ class Expense(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     amount = db.Column(db.Float, nullable=False)
-    currency = db.Column(db.String(3), default="MYR")
+    currency = db.Column(db.String(3), default="UGX")
     date = db.Column(db.DateTime, default=datetime.utcnow)
     description = db.Column(db.Text, nullable=True)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
