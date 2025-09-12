@@ -78,7 +78,7 @@ class ExpenseReport {
                   <div class="card bg-secondary text-white">
                     <div class="card-body text-center">
                       <h5>Total Expenses</h5>
-                      <h3 id="report-total-expenses">MYR 0.00</h3>
+                      <h3 id="report-total-expenses">UGX 0.00</h3>
                     </div>
                   </div>
                 </div>
@@ -86,7 +86,7 @@ class ExpenseReport {
                   <div class="card bg-secondary text-white">
                     <div class="card-body text-center">
                       <h5>Average Expense</h5>
-                      <h3 id="report-average-expense">MYR 0.00</h3>
+                      <h3 id="report-average-expense">UGX 0.00</h3>
                     </div>
                   </div>
                 </div>
@@ -155,8 +155,8 @@ class ExpenseReport {
     
     // Update summary stats
     const summary = reports.summary || {};
-    document.getElementById('report-total-expenses').textContent = `MYR ${this.formatCurrency(summary.total || 0)}`;
-    document.getElementById('report-average-expense').textContent = `MYR ${this.formatCurrency(summary.average || 0)}`;
+    document.getElementById('report-total-expenses').textContent = `UGX ${this.formatCurrency(summary.total || 0)}`;
+    document.getElementById('report-average-expense').textContent = `UGX ${this.formatCurrency(summary.average || 0)}`;
     document.getElementById('report-transaction-count').textContent = summary.count || 0;
     
     // Update category breakdown table
@@ -193,7 +193,7 @@ class ExpenseReport {
               <i class="fas fa-${category.icon}"></i> ${category.name}
             </span>
           </td>
-          <td>${category.currency || 'MYR'} ${this.formatCurrency(category.total)}</td>
+          <td>${category.currency || 'UGX'} ${this.formatCurrency(category.total)}</td>
           <td>
             <div class="d-flex align-items-center">
               <div class="progress flex-grow-1 me-2" style="height: 8px;">
@@ -242,7 +242,7 @@ class ExpenseReport {
             beginAtZero: true,
             ticks: {
               callback: function(value) {
-                return 'MYR ' + value;
+                return 'UGX ' + value;
               }
             }
           }
@@ -251,7 +251,7 @@ class ExpenseReport {
           tooltip: {
             callbacks: {
               label: function(context) {
-                return 'MYR ' + context.parsed.y.toFixed(2);
+                return 'UGX ' + context.parsed.y.toFixed(2);
               }
             }
           }
@@ -297,7 +297,7 @@ class ExpenseReport {
                 const value = context.parsed || 0;
                 const total = context.dataset.data.reduce((a, b) => a + b, 0);
                 const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
-                return `${label}: MYR ${value.toFixed(2)} (${percentage}%)`;
+                return `${label}: UGX ${value.toFixed(2)} (${percentage}%)`;
               }
             }
           }

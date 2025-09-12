@@ -177,7 +177,7 @@ class BudgetList {
                     ${categoryName}
                   </span>
                 </td>
-                <td>MYR ${budget.amount.toFixed(2)}</td>
+                <td>UGX ${budget.amount.toFixed(2)}</td>
                 <td>${startDate} to ${endDate}</td>
                 <td><span class="badge bg-${statusClass}">${statusText}</span></td>
                 <td>
@@ -241,8 +241,8 @@ class BudgetList {
             </span>
           </div>
           <div class="d-flex justify-content-between mb-1">
-            <span>Budget: MYR ${kpi.budget_amount.toFixed(2)}</span>
-            <span>Spent: MYR ${kpi.total_spent.toFixed(2)}</span>
+            <span>Budget: UGX ${kpi.budget_amount.toFixed(2)}</span>
+            <span>Spent: UGX ${kpi.total_spent.toFixed(2)}</span>
           </div>
           <div class="progress" style="height: 20px;">
             <div class="progress-bar bg-${progressClass}" role="progressbar" 
@@ -252,7 +252,7 @@ class BudgetList {
             </div>
           </div>
           <div class="d-flex justify-content-between mt-1">
-            <small>Remaining: MYR ${kpi.remaining.toFixed(2)}</small>
+            <small>Remaining: UGX ${kpi.remaining.toFixed(2)}</small>
             <small>${kpi.start_date} - ${kpi.end_date}</small>
           </div>
         </div>
@@ -267,7 +267,7 @@ class BudgetList {
   formatCurrency(value) {
     return new Intl.NumberFormat('en-MY', {
       style: 'currency',
-      currency: 'MYR',
+      currency: 'UGX',
       minimumFractionDigits: 2
     }).format(value);
   }

@@ -37,7 +37,7 @@ class BudgetForm {
               <div class="col-md-6">
                 <label for="budget-amount" class="form-label">Budget Amount</label>
                 <div class="input-group">
-                  <span class="input-group-text">RM</span>
+                  <span class="input-group-text">UGX</span>
                   <input type="number" class="form-control" id="budget-amount" min="0.01" step="0.01" value="${budget ? budget.amount : ''}" required>
                   <div class="invalid-feedback">Please provide a valid amount.</div>
                 </div>
