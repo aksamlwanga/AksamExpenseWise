@@ -8,9 +8,13 @@ from sqlalchemy.orm import DeclarativeBase
 from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.utils import secure_filename
 import uuid
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Configure logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class Base(DeclarativeBase):
@@ -22,10 +26,15 @@ login_manager = LoginManager()
 # Create the app
 app = Flask(__name__, static_folder='static')
 app.secret_key = os.environ.get("SESSION_SECRET", "forest-expense-tracker-secret-key")
-app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)  # Needed for url_for to generate with https
+app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
-# Configure the database
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///expenses.db")
+# Configure MySQL database
+mysql_user = os.environ.get("MYSQL_USER")
+mysql_password = os.environ.get("MYSQL_PASSWORD")
+mysql_host = os.environ.get("MYSQL_HOST")
+mysql_db = os.environ.get("MYSQL_DATABASE")
+
+app.config["SQLALCHEMY_DATABASE_URI"] = f"mysql+pymysql://{mysql_user}:{mysql_password}@{mysql_host}/{mysql_db}"
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "pool_recycle": 300,
     "pool_pre_ping": True,
@@ -37,15 +46,15 @@ app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'uploads')
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB max upload
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-# Configure application theme (using Bootstrap with forest theme)
-app.config['THEME_COLOR'] = '#2e7d32'  # Forest green
+# Configure application theme
+app.config['THEME_COLOR'] = '#2e7d32'
 app.config['CURRENCY_CODE'] = 'UGX'
 app.config['CURRENCY_SYMBOL'] = 'UGX'
 
 # Initialize extensions
 db.init_app(app)
 login_manager.init_app(app)
-login_manager.login_view = 'login'  # type: ignore
+login_manager.login_view = 'login'
 login_manager.login_message = 'Please log in to access this page.'
 login_manager.login_message_category = 'info'
 
@@ -55,13 +64,9 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 with app.app_context():
-    # Import models after db initialization
-    from models import User, Expense, Category, Receipt
+    from models import User, Expense, Category, Receipt, Budget
     db.create_all()
-
-    # Create default categories if they don't exist
     from models import create_default_categories
     create_default_categories()
 
-# Import routes after app and db initialization
 import routes

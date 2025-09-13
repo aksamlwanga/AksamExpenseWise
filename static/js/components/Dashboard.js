@@ -14,7 +14,7 @@ class Dashboard {
     container.className = 'container py-4';
     container.innerHTML = `
       <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3"><i class="fas fa-leaf"></i> Forest Expense Dashboard</h1>
+        <h1 class="h3"><i class="fas fa-leaf"></i> Financial Tracker Dashboard</h1>
         <button id="refresh-dashboard" class="btn btn-sm btn-forest">
           <i class="fas fa-leaf fa-spin-pulse"></i> Refresh
         </button>
