@@ -1,0 +1,47 @@
+# Environment variables and secrets
+.env
+.env.local
+.env.production
+
+# User creation script (contains sensitive info)
+create_users.py
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environment
+venv/
+env/
+
+# Database files
+*.db
+*.sqlite3
+
+# Uploads directory (user files)
+uploads/*
+!uploads/.gitkeep
+
+# Logs
+*.log
+logs/
+
+# Backup files
+*.backup
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# SSL certificates (if any)
+*.pem
+*.key
+*.crt
